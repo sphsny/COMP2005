@@ -6,3 +6,4 @@ MainController: [Lecture 3](https://dle.plymouth.ac.uk/pluginfile.php/3815448/mo
 MainControllerTest: [Spring Guide](https://spring.io/guides/gs/testing-web)  
 CI: [Lecture 6](https://dle.plymouth.ac.uk/pluginfile.php/3823819/mod_resource/content/0/06-CI_CD.pdf)  
 External API Connection: [Medium - Access External APIs in Spring Boot](https://medium.com/@chandantechie/5-effective-methods-to-access-external-apis-in-springboot-3x-2a654822019f)
+Mockito: [Unit tests with Mockito](https://www.vogella.com/tutorials/Mockito/article.html)

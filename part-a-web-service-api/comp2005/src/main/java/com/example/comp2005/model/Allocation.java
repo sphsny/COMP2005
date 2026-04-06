@@ -19,4 +19,14 @@ public class Allocation {
     public int roomID;
     public String startTime;
     public String endTime;
+
+    // constructor
+    public Allocation(int id, int admissionID, int employeeID, int roomID, String startTime, String endTime) {
+        this.id = id;
+        this.admissionID = admissionID;
+        this.employeeID = employeeID;
+        this.roomID = roomID;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }

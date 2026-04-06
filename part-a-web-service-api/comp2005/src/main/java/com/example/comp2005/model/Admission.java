@@ -15,4 +15,12 @@ public class Admission {
     public int patientID;
     public String admissionDate;
     public String dischargeDate;
+
+    // constructor
+    public Admission(int id, int patientID, String admissionDate, String dischargeDate) {
+        this.id = id;
+        this.patientID = patientID;
+        this.admissionDate = admissionDate;
+        this.dischargeDate = dischargeDate;
+    }
 }

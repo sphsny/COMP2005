@@ -17,4 +17,12 @@ public class RoomAllocation {
     public int roomID;
     public String timeIn;
     public String timeOut;
+
+    public RoomAllocation(int id, int admissionID, int roomID, String timeIn, String timeOut) {
+        this.id = id;
+        this.admissionID = admissionID;
+        this.roomID = roomID;
+        this.timeIn = timeIn;
+        this.timeOut = timeOut;
+    }
 }

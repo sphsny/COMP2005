@@ -1,7 +1,7 @@
 package com.example.comp2005.unit;
 
 import com.example.comp2005.model.Admission;
-import com.example.comp2005.model.Allocation;
+import com.example.comp2005.model.RoomAllocation;
 import com.example.comp2005.service.ApiService;
 import com.example.comp2005.service.F1Service;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +20,10 @@ import static org.mockito.Mockito.when;
 // @BeforeAll @AfterAll @BeforeEach @AfterEach @Test
 // @AssumeFalse @AssumeTrue @AssumeThat
 
-// Test Cases:
+// Test cases:
 // return rooms for patient X
-// corner case: patient has been to a room twice -> return room only once in the list
-// edge case: patient has not been to a room yet -> null is returned
+// corner case: patient has been to the same room twice -> return it once
+// edge case: patient has no admissions or no room allocations -> return empty list
 
 // Business logic:
 // get patientID -> get admissionID -> get roomID
@@ -46,15 +46,15 @@ class F1ServiceTest {
                 new Admission(3, 2, "2021-09-23T21:50:00", "2021-09-27T09:56:00")
         );
 
-        List<Allocation> fakeAllocations = List.of(
-                new Allocation(1, 1, 4, 3, "2020-11-28T16:45:00", "2020-11-28T23:56:00"),
-                new Allocation(2, 3, 4, 5, "2021-09-23T21:50:00", "2021-09-24T09:50:00"),
-                new Allocation(3, 2, 6, 7, "2020-12-07T22:14:00", "2020-12-08T20:00:00")
+        List<RoomAllocation> fakeRoomAllocations = List.of(
+                new RoomAllocation(1, 1, 3, "2020-11-28T16:45:00", "2020-11-28T20:45:00"),
+                new RoomAllocation(2, 3, 5, "2021-09-23T21:50:00", "2021-09-24T09:50:00"),
+                new RoomAllocation(3, 2, 7, "2020-12-07T22:14:00", "2020-12-08T20:00:00")
         );
 
         // return fake data on api call
         when(apiService.getAdmissions()).thenReturn(fakeAdmissions);
-        when(apiService.getAllocations()).thenReturn(fakeAllocations);
+        when(apiService.getRoomAllocations()).thenReturn(fakeRoomAllocations);
     }
 
     // second and third A: act and assert
@@ -71,9 +71,9 @@ class F1ServiceTest {
     @Test
     void shouldReturnDistinctRoomsOnly() {
         // patient in same room twice should only appear once
-        when(apiService.getAllocations()).thenReturn(List.of(
-                new Allocation(1, 1, 4, 3, "2020-11-28T16:45:00", "2020-11-28T23:56:00"),
-                new Allocation(2, 1, 4, 3, "2020-11-29T16:45:00", "2020-11-29T23:56:00")
+        when(apiService.getRoomAllocations()).thenReturn(List.of(
+                new RoomAllocation(1, 1, 3, "2020-11-28T16:45:00", "2020-11-28T20:45:00"),
+                new RoomAllocation(2, 1, 3, "2020-11-28T20:45:00", "2020-11-28T23:56:00")
         ));
 
         List<Integer> result = f1Service.getRoomsByPatient(2);

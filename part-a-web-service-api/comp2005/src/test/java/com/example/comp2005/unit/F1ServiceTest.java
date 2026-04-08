@@ -48,8 +48,7 @@ class F1ServiceTest {
 
         List<RoomAllocation> fakeRoomAllocations = List.of(
                 new RoomAllocation(1, 1, 3, "2020-11-28T16:45:00", "2020-11-28T20:45:00"),
-                new RoomAllocation(2, 3, 5, "2021-09-23T21:50:00", "2021-09-24T09:50:00"),
-                new RoomAllocation(3, 2, 7, "2020-12-07T22:14:00", "2020-12-08T20:00:00")
+                new RoomAllocation(2, 3, 5, "2021-09-23T21:50:00", "2021-09-24T09:50:00")
         );
 
         // return fake data on api call
@@ -80,10 +79,17 @@ class F1ServiceTest {
         assertEquals(1, result.size());
     }
 
-    // -- edge case: patient has not been allocated to room yet --
+    // -- edge case: patient doesn't exist (test for negative values, too) --
     @Test
     void shouldReturnEmptyListIfPatientNotFound() {
-        List<Integer> result = f1Service.getRoomsByPatient(10000);
+        List<Integer> result = f1Service.getRoomsByPatient(-10000);
+        assertTrue(result.isEmpty());
+    }
+
+    // -- edge case: patient exists, but has not been allocated to room yet --
+    @Test
+    void shouldReturnEmptyListIfPatientNotAllocated() {
+        List<Integer> result = f1Service.getRoomsByPatient(1);
         assertTrue(result.isEmpty());
     }
 }

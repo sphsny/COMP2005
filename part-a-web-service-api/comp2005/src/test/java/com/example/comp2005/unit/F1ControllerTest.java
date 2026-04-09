@@ -28,7 +28,7 @@ class F1ControllerTest {
         // mock the service business logic
         when(f1Service.getRoomsByPatient(2)).thenReturn(List.of(3, 5));
         // mock calling the endpoint
-        mockMvc.perform(get("/api/patients/2/rooms"))
+        mockMvc.perform(get("/api/F1/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").value(3)) // first index value == 3
                 .andExpect(jsonPath("$[1]").value(5)); // second index value == 5
@@ -39,7 +39,7 @@ class F1ControllerTest {
         // mock non existing patient -> empty list
         when(f1Service.getRoomsByPatient(10000)).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/patients/10000/rooms"))
+        mockMvc.perform(get("/api/F1/10000"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }

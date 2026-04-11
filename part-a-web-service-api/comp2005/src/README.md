@@ -10,3 +10,4 @@ Mockito: [Unit tests with Mockito](https://www.vogella.com/tutorials/Mockito/art
 Service Layer Pattern: [Service Layer Pattern in Java](https://foojay.io/today/service-layer-pattern-in-java-with-spring-boot/)  
 Java List Filtering: [Using the Stream API](https://medium.com/@alxkm/filtering-a-list-in-java-using-the-stream-api-multiple-approaches-28a7e852d4b1)   
 OpenAPI and Controller: [REST API Documentation for Spring Boot using Swagger](https://medium.com/javaguides/generate-rest-api-documentation-for-spring-boot-project-using-swagger-996e48fe0cea)  
+LocalDate Mock: [GfG LocalDate minusDays() method](https://www.geeksforgeeks.org/java/localdate-minusdays-method-in-java-with-examples/)  

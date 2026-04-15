@@ -11,3 +11,16 @@ Service Layer Pattern: [Service Layer Pattern in Java](https://foojay.io/today/s
 Java List Filtering: [Using the Stream API](https://medium.com/@alxkm/filtering-a-list-in-java-using-the-stream-api-multiple-approaches-28a7e852d4b1)   
 OpenAPI and Controller: [REST API Documentation for Spring Boot using Swagger](https://medium.com/javaguides/generate-rest-api-documentation-for-spring-boot-project-using-swagger-996e48fe0cea)  
 LocalDate Mock: [GfG LocalDate minusDays() method](https://www.geeksforgeeks.org/java/localdate-minusdays-method-in-java-with-examples/)  
+Java Stream API: [Medium SQL operations using Java Streams API](https://medium.com/@dinesharney/sql-like-operations-in-modern-java-using-streams-api-e97ed795fdd7)  
+
+
+### Java Stream Operations
+
+.stream() FROM  
+.map() SELECT  
+.filter() WHERE  
+.sorted() ORDER BY  
+.collect(Collectors.toMap/Set()) IN  
+.distinct() DISTINCT  
+Collectors.groupingBy() GROUP BY  
+.collect(Collectors.toList())  

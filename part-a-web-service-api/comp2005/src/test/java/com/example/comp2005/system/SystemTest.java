@@ -27,6 +27,15 @@ public class SystemTest {
 
     // call each real endpoint ensuring API is reachable
 
+    // performance test to confirm external api responds within 2 seconds
+    @Test
+    void shouldGetResponseWithin2Seconds() {
+        long start = System.currentTimeMillis();
+        apiService.getAdmissions();
+        long duration = System.currentTimeMillis() - start;
+        assertFalse(duration > 2000, "Response took longer than 2 seconds"); // ideal response time is 0.1 seconds, until 2 seconds is acceptable
+    }
+
     @Test
     void shouldFetchRealAdmissions() {
         var result = apiService.getAdmissions();

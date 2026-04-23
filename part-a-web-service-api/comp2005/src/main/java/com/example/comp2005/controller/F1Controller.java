@@ -30,7 +30,7 @@ public class F1Controller {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successfully returned list of rooms")
     })
-    // custom endpoint, test manually via http://localhost:8080/api/patients/1/rooms
+    // custom endpoint, test manually via http://localhost:8080/api/F1/1
     @GetMapping("/F1/{patientId}")
     public ResponseEntity<List<Integer>> getRoomsByPatient(@PathVariable int patientId) {
         return ResponseEntity.ok(f1Service.getRoomsByPatient(patientId));

@@ -1,17 +1,21 @@
 package org.example;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
+import org.example.model.Patient;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class PatientLookUp extends JFrame {
 
     private JPanel contentPane;
-    private JList<Integer> rooms;
+    private JList<String> rooms;
     private JButton searchButton;
     private JTextField input;
+    private JLabel patientLabel;
 
     private final ApiService apiService = new ApiService();
 
@@ -22,13 +26,8 @@ public class PatientLookUp extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        // listen for click on search button
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleSearch();
-            }
-        });
+        // listen for click on search button, changed to lambda (suggested by intelliJ)
+        searchButton.addActionListener(_ -> handleSearch());
 
         // display frame
         setVisible(true);
@@ -40,6 +39,8 @@ public class PatientLookUp extends JFrame {
         // catch empty input
         if (text.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter a patient ID.");
+            patientLabel.setText("");
+            rooms.setModel(new DefaultListModel<>());
             return;
         }
 
@@ -48,35 +49,58 @@ public class PatientLookUp extends JFrame {
             patientId = Integer.parseInt(text); // convert text to integer and assign to patient id
             // catch inputs that are not an integer
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a number.");
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a positive number.");
+            input.setText("");
+            patientLabel.setText("");
+            rooms.setModel(new DefaultListModel<>());
             return;
         }
 
         // catch negative values
         if (patientId < 1) {
-            JOptionPane.showMessageDialog(this, "Please enter a valid patient ID.");
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a positive number.");
+            input.setText("");
+            patientLabel.setText("");
+            rooms.setModel(new DefaultListModel<>());
             return;
         }
 
         try {
-            List<Integer> roomList = apiService.getRoomsByPatient(patientId); // call the api endpoint
+            // get patient from external api
+            Patient patient = apiService.getPatient(patientId);
 
-            DefaultListModel<Integer> model = new DefaultListModel<>();
+            // stop and return without calling local api if patient doesn't exist
+            if (patient == null) {
+                JOptionPane.showMessageDialog(this, "No patient with ID " + patientId + ".");
+                input.setText("");
+                patientLabel.setText("");
+                rooms.setModel(new DefaultListModel<>());
+                return;
+            }
+
+            // get the local F1 api endpoint
+            List<Integer> roomList = apiService.getRoomsByPatient(patientId);
+
+            // clear input
+            input.setText("");
+
+            DefaultListModel<String> model = new DefaultListModel<>();
             // display no rooms for patient found message instead of empty list -> tells user what is wrong
             if (roomList.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No rooms found for patient " + patientId + ".");
+                model.addElement("No rooms found.");
             } else {
                 // put rooms from response array into list
-                for (Integer room : roomList) {
-                    model.addElement(room);
+                for (Integer roomId : roomList) {
+                    model.addElement("Room: " + roomId);
                 }
             }
+            patientLabel.setText("Patient: " + patient.forename + " " + patient.surname);
             rooms.setModel(model); // return the list of rooms
 
-            // catch api connection error (e.g. part a is not running)
+            // catch api connection error (e.g. part A is not running)
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                    "Could not connect to server.",
+                    "Could not connect to local server.",
                     "Connection Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -98,28 +122,31 @@ public class PatientLookUp extends JFrame {
      */
     private void $$$setupUI$$$() {
         contentPane = new JPanel();
-        contentPane.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 3, new Insets(10, 10, 10, 10), -1, -1));
+        contentPane.setLayout(new GridLayoutManager(6, 3, new Insets(10, 10, 10, 10), -1, -1));
         contentPane.setPreferredSize(new Dimension(400, 200));
-        final com.intellij.uiDesigner.core.Spacer spacer1 = new com.intellij.uiDesigner.core.Spacer();
-        contentPane.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(2, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        contentPane.add(spacer1, new GridConstraints(3, 1, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         rooms = new JList();
-        contentPane.add(rooms, new com.intellij.uiDesigner.core.GridConstraints(2, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+        contentPane.add(rooms, new GridConstraints(3, 2, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         final JLabel label1 = new JLabel();
-        label1.setText("Patient ID");
-        contentPane.add(label1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label1.setText("Look up a Patient ID");
+        contentPane.add(label1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(60, 23), null, 0, false));
         searchButton = new JButton();
         searchButton.setText("Search");
-        contentPane.add(searchButton, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        input = new JTextField();
-        input.setText("");
-        contentPane.add(input, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, new Dimension(100, 30), new Dimension(150, 30), new Dimension(250, 30), 0, false));
+        contentPane.add(searchButton, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setEnabled(true);
-        label2.setText("Patient Room Look Up");
-        contentPane.add(label2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 3, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label2.setText("<html><b>Patient Room Look Up</b></html>");
+        contentPane.add(label2, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("List of Rooms");
-        contentPane.add(label3, new com.intellij.uiDesigner.core.GridConstraints(1, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(label3, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(84, 23), null, 0, false));
+        patientLabel = new JLabel();
+        patientLabel.setText("Patient Name");
+        contentPane.add(patientLabel, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        input = new JTextField();
+        input.setText("");
+        contentPane.add(input, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(100, 30), new Dimension(150, 30), new Dimension(250, 30), 0, false));
     }
 
     /**
@@ -128,4 +155,5 @@ public class PatientLookUp extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }

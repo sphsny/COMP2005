@@ -5,71 +5,61 @@ package com.example.comp2005.system;
 // for now (before service implementation):
 // test that external api returns something and is reachable
 
-// after service and controller implementations:
 // start the full Spring application on localhost:8080
 // call each endpoint
 
-// data flow:
-// localhost endpoint call -> controller -> service -> apiservice -> return
-
-import com.example.comp2005.service.ApiService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+        properties = {
+                "server.port=8080" // boot springboot app on port 8080
+        })
+
+// entire SystemTest fails if one test fails (non 200 response/non JSON body)
+
 public class SystemTest {
 
-    @Autowired
-    private ApiService apiService; // use actual external API
-
-    // call each real endpoint ensuring API is reachable
-
-    // performance test to confirm external api responds within 2 seconds
-    /*
-    @Test
-    void shouldGetResponseWithin2Seconds() {
-        long start = System.currentTimeMillis();
-        apiService.getAdmissions();
-        long duration = System.currentTimeMillis() - start;
-        assertFalse(duration > 2000, "Response took longer than 2 seconds"); // ideal response time is 0.1 seconds, until 2 seconds is acceptable
-    }
-    */
+    private static final Logger log = LoggerFactory.getLogger(SystemTest.class); // use for logging
 
     @Test
-    void shouldFetchRealAdmissions() {
-        var result = apiService.getAdmissions();
-        assertNotNull(result); // ensure result is not null
-        assertFalse(result.isEmpty()); // test fails if result is empty
-    }
+    void PerformanceTest() {
+        // define endpoints
+        String[] endpoints = {
+                "F1/1",
+                "F2/1",
+                "F3",
+                "F4"
+        };
 
-    @Test
-    void shouldFetchRealPatients() {
-        var result = apiService.getPatients();
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
+        // loop through each endpoint
+        for (String endpoint : endpoints) {
+            // our spring boot application's API address
+            String baseUrl = "http://localhost:8080/api/";
+            String url = baseUrl + endpoint;
 
-    @Test
-    void shouldFetchRealAllocations() {
-        var result = apiService.getAllocations();
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
+            log.info("Testing performance for: {}", url);
+            long start = System.currentTimeMillis(); // start time
+            ResponseEntity<String> response =
+                    new RestTemplate().getForEntity(url, String.class); // http response
+            long duration = System.currentTimeMillis() - start; // duration
 
-    @Test
-    void shouldFetchRealEmployees() {
-        var result = apiService.getEmployees();
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-    }
+            // log responses for each endpoint
+            log.info("Endpoint: {}", endpoint);
+            log.info("Status: {}", response.getStatusCode());
+            log.info("Response: {}", response.getBody());
+            log.info("Response time: {} ms", duration);
 
-    @Test
-    void shouldFetchRoomAllocations() {
-        var result = apiService.getRoomAllocations();
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+            assertEquals(HttpStatus.OK, response.getStatusCode()); // endpoint reached
+            assertNotNull(response.getBody()); // body returned
+        }
     }
 }

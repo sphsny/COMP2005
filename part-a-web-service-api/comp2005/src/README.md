@@ -14,14 +14,23 @@ LocalDate Mock: [GfG LocalDate minusDays() method](https://www.geeksforgeeks.org
 Java Stream API: [Medium SQL operations using Java Streams API](https://medium.com/@dinesharney/sql-like-operations-in-modern-java-using-streams-api-e97ed795fdd7)  
 MockMvc SpringBootTest vs WebMvcTest: [Baeldung](https://www.baeldung.com/spring-mockmvc-vs-webmvctest)  
 JaCoCo PlugIn: [Gradle JaCoCo PlugIn](https://docs.gradle.org/current/userguide/jacoco_plugin.html)  
+Docker: [Lecture 2](https://dle.plymouth.ac.uk/pluginfile.php/3811965/mod_resource/content/1/02-sw-testing.pdf)  
+
 
 ### Java Stream Operations
 
-.stream() FROM  
-.map() SELECT  
-.filter() WHERE  
-.sorted() ORDER BY  
-.collect(Collectors.toMap/Set()) IN  
-.distinct() DISTINCT  
-Collectors.groupingBy() GROUP BY  
+.stream() - FROM  
+.map() - SELECT  
+.filter() - WHERE  
+.sorted() - ORDER BY  
+.collect(Collectors.toMap/Set()) - IN  
+.distinct() - DISTINCT  
+Collectors.groupingBy() - GROUP BY  
 .collect(Collectors.toList())  
+
+### MockMvc Methods
+perform() - execute HTTP request  
+andExpect() - verify HTTP response  
+status().isOk() - check HTTP status  
+content().string() - check response body  
+jsonPath() - verify JSON data

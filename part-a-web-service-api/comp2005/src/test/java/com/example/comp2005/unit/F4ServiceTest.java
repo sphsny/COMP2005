@@ -67,6 +67,23 @@ class F4ServiceTest {
         assertTrue(result.isEmpty());
     }
 
+    // edge case: allocation start time in the future
+    @Test
+    void shouldNotReturnOverloadedIfConcurrentAllocationsInTheFuture() {
+        LocalDateTime now = LocalDateTime.now();
+
+        // employee 4 overloaded in the future
+        when(apiService.getAllocations()).thenReturn(List.of(
+                new Allocation(1, 1, 4, 3, now.plusHours(1).toString(), now.plusHours(3).toString()),
+                new Allocation(2, 2, 4, 5, now.plusHours(1).toString(), now.plusHours(3).toString()),
+                new Allocation(3, 3, 4, 7, now.plusHours(1).toString(), now.plusHours(3).toString())
+        ));
+
+        List<Integer> result = f4Service.getOverloadedStaff();
+
+        assertTrue(result.isEmpty());
+    }
+
     // corner case: multiple overloaded employees
     @Test
     void shouldReturnMultipleOverloadedStaff() {

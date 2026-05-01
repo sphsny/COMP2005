@@ -48,4 +48,13 @@ jacocoTestReport {
 		csv.required = false
 		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
 	}
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					'com/example/comp2005/Comp2005Application.class',
+					'com/example/comp2005/service/ApiService.class'
+			])
+		}))
+	}
 }
